@@ -5,6 +5,8 @@ import TextTruncate from 'react-text-truncate';
 import { format } from 'date-fns';
 import { Layout, Tag, Image } from 'antd';
 
+import NoPhoto from './empty-thumb.jpg';
+
 import './Movie.css';
 
 class Movie extends Component {
@@ -33,7 +35,11 @@ class Movie extends Component {
         <Image
           className="card-image"
           alt="example"
-          src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
+          src={
+            movie.poster_path
+              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+              : NoPhoto
+          }
           preview={false}
         />
         <Layout className="card-body">

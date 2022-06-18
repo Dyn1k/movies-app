@@ -1,66 +1,21 @@
-/* eslint-disable */
+import React from 'react';
 
-import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-import { List } from 'antd';
+import Movies from './Movies';
+import NoMovies from './NoMovies';
 
-import Movie from '../Movie';
+import './MovieList.css';
 
-import MoviesService from '../../services/MoviesService';
+const MovieList = ({ movies }) =>
+  movies.length ? <Movies movies={movies} /> : <NoMovies />;
 
-const data = [
-  {
-    title: 'Title 1',
-  },
-  {
-    title: 'Title 2',
-  },
-  {
-    title: 'Title 3',
-  },
-  {
-    title: 'Title 4',
-  },
-  {
-    title: 'Title 5',
-  },
-  {
-    title: 'Title 6',
-  },
-];
+MovieList.defaultProps = {
+  movies: [],
+};
 
-class MovieList extends Component {
-  constructor(props) {
-    super(props);
-    this.moviesService = new MoviesService();
-
-    this.state = {};
-  }
-
-  componentDidMount() {
-    this.moviesService.getMoviesBySearch().then((movies) => {
-      this.setState({
-        movies: movies.results,
-      });
-    });
-  }
-
-  render() {
-    return (
-      <List
-        grid={{
-          gutter: [36, 16],
-          column: 2,
-        }}
-        dataSource={this.state.movies}
-        renderItem={(item) => (
-          <List.Item>
-            <Movie movie={item} />
-          </List.Item>
-        )}
-      />
-    );
-  }
-}
+MovieList.propTypes = {
+  movies: PropTypes.arrayOf(PropTypes.shape()),
+};
 
 export default MovieList;

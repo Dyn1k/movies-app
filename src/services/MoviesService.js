@@ -13,8 +13,12 @@ class MoviesService {
     return res.json();
   }
 
-  getMoviesBySearch() {
-    return this.getResource('&query=return');
+  getMoviesBySearch(text) {
+    return this.getResource(`&query=${text}`);
+  }
+
+  getSearchPage(text, pageNumber) {
+    return this.getResource(`&query=${text}&page=${pageNumber}`);
   }
 }
 
