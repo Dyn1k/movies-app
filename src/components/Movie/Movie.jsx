@@ -1,11 +1,14 @@
-/* eslint-disable */
 import React, { Component } from 'react';
 
+import PropTypes from 'prop-types';
 import TextTruncate from 'react-text-truncate';
 import { format } from 'date-fns';
-import { Layout, Tag, Image } from 'antd';
+import { Layout, Image } from 'antd';
 
 import NoPhoto from './empty-thumb.jpg';
+import VoteAverage from '../VoteAverage';
+import Genres from '../Genres';
+import UserRate from '../UserRate';
 
 import './Movie.css';
 
@@ -19,16 +22,13 @@ class Movie extends Component {
   }
 
   componentDidMount() {
-    const height = this.divElement.clientHeight;
+    const height = this.divElement.clientHeight - 22;
     this.setState({ height });
   }
 
-  a(e) {
-    console.log(e.scrollHeight);
-    return this.props.movie.overview;
-  }
   render() {
     const { movie } = this.props;
+    const { height } = this.state;
 
     return (
       <Layout className="card-wrapper">
@@ -44,16 +44,13 @@ class Movie extends Component {
         />
         <Layout className="card-body">
           <div className="card-title">{movie.original_title}</div>
+          <VoteAverage vote={movie.vote_average} />
           <div className="card-release-date">
             {movie.release_date
               ? format(new Date(movie.release_date), "MMMMMM d',' Y")
               : 'No date'}
           </div>
-
-          <div className="card-categories">
-            <Tag color="default">Action</Tag>
-            <Tag color="default">Drama</Tag>
-          </div>
+          {movie.genre_ids ? <Genres genres={movie.genre_ids} /> : null}
           <div
             className="card-description"
             ref={(divElement) => {
@@ -61,16 +58,21 @@ class Movie extends Component {
             }}
           >
             <TextTruncate
-              line={Math.floor(this.state.height / 22)}
+              line={Math.floor(height / 22)}
               element="span"
               truncateText=" …"
-              text={movie.overview}
+              text={movie.overview ? movie.overview : 'No description'}
             />
+            <UserRate />
           </div>
         </Layout>
       </Layout>
     );
   }
 }
+
+Movie.propTypes = {
+  movie: PropTypes.shape().isRequired,
+};
 
 export default Movie;

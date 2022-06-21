@@ -1,11 +1,16 @@
 class MoviesService {
   constructor() {
-    this.apiBase =
-      'https://api.themoviedb.org/3/search/movie?api_key=2cc18ce7a3c09a8400d9c07212f86c7e';
+    this.apiBase = 'https://api.themoviedb.org/3';
+    this.apiMovie = '/search/movie';
+    this.apiGenres = '/genre/movie/list';
+    this.apiGuestSession = '/authentication/guest_session/new';
+    this.apiKey = '2cc18ce7a3c09a8400d9c07212f86c7e';
   }
 
-  async getResource(url) {
-    const res = await fetch(`${this.apiBase}${url}`);
+  async getResource(type, url = '') {
+    const res = await fetch(
+      `${this.apiBase}${type}?api_key=${this.apiKey}${url}`
+    );
 
     if (!res.ok) {
       throw new Error(`Could not fetch ${url}, received ${res.status}`);
@@ -13,12 +18,12 @@ class MoviesService {
     return res.json();
   }
 
-  getMoviesBySearch(text) {
-    return this.getResource(`&query=${text}`);
+  getMovies(text, page = 1) {
+    return this.getResource(this.apiMovie, `&query=${text}&page=${page}`);
   }
 
-  getSearchPage(text, pageNumber) {
-    return this.getResource(`&query=${text}&page=${pageNumber}`);
+  async getGenres() {
+    return this.getResource(this.apiGenres);
   }
 }
 

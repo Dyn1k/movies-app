@@ -1,55 +1,45 @@
 import React, { Component } from 'react';
-// /* eslint-disable */
+
 import { debounce } from 'lodash';
 import { Layout } from 'antd';
 import 'antd/dist/antd.min.css';
 import './App.css';
 
+import MoviesService from '../../services/MoviesService';
+
 import SearchPanel from '../SearchPanel';
 import MovieList from '../MovieList';
-import MoviesService from '../../services/MoviesService';
 import Loader from '../Loader';
 import NoInternetConnection from '../NoInternetConnection';
 import ErrorIndicator from '../ErrorIndicator';
 import ListPagination from '../ListPagination';
+import HeaderTabs from '../HeaderTabs';
+
+import { MoviesServiceProvider } from '../MoviesServiceContext';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.moviesService = new MoviesService();
+    this.genres = null;
 
     this.state = {
       loading: true,
-      errorObj: {
-        errorFlag: false,
-        errorText: '',
-      },
+      error: false,
     };
 
     this.debouncedSearch = debounce((criteria) => {
       if (criteria.target.value.replace(/\s/g, '').length !== 0) {
-        this.setState({
-          loading: true,
-          errorObj: {
-            errorFlag: false,
-          },
-        });
-        this.moviesService
-          .getMoviesBySearch(criteria.target.value)
-          .then((movies) => {
-            this.setState({
-              movies: {
-                currentSearch: criteria.target.value,
-                moviesArray: movies.results,
-                totalResults: movies.total_results,
-                currentPage: 1,
-              },
-              loading: false,
-            });
-          })
-          .catch(this.onError);
+        this.setPreloadStates();
+        this.requestMovies(criteria.target.value);
       }
     }, 1000);
+
+    this.getGenres();
+  }
+
+  componentDidMount() {
+    this.requestMovies('return');
   }
 
   onSearch = (e) => {
@@ -58,69 +48,78 @@ class App extends Component {
 
   onError = (err) => {
     this.setState({
-      errorObj: {
-        errorFlag: true,
-        errorText: err.message,
-      },
+      error: true,
+      errorMessage: err.message,
       loading: false,
-      movies: {
-        moviesArray: [],
-        totalResults: 0,
-      },
+      totalResults: 0,
+      movies: [],
     });
   };
 
   onChangePage = (pageNumber) => {
-    const { movies } = this.state;
+    const { currentSearch } = this.state;
+    this.setPreloadStates();
+    this.requestMovies(currentSearch, pageNumber);
+  };
 
+  setPreloadStates = () => {
     this.setState({
       loading: true,
-      errorObj: {
-        errorFlag: false,
-      },
+      error: false,
     });
+  };
+
+  requestMovies = (name, num = 1) => {
     this.moviesService
-      .getSearchPage(movies.currentSearch, pageNumber)
-      .then((movi) =>
+      .getMovies(name, num)
+      .then((movies) =>
         this.setState(() => ({
-          movies: {
-            currentSearch: movies.currentSearch,
-            moviesArray: movi.results,
-            totalResults: movi.total_results,
-            currentPage: movi.page,
-          },
+          currentSearch: name,
+          movies: movies.results,
+          totalResults: movies.total_results,
+          currentPage: movies.page,
           loading: false,
         }))
       )
       .catch(this.onError);
   };
 
+  getGenres = () => {
+    this.moviesService
+      .getGenres()
+      .then((r) => {
+        this.genres = r.genres;
+      })
+      .catch(this.onError);
+  };
+
   render() {
-    const { movies, loading, errorObj } = this.state;
-    const { errorFlag, errorText } = errorObj;
+    const { movies, totalResults, currentPage, loading, error, errorMessage } =
+      this.state;
 
-    const hasData = !(loading || errorFlag);
+    const hasData = !(loading || error);
 
-    const errorMessage = errorFlag ? (
-      <ErrorIndicator error={errorText} />
-    ) : null;
+    const errorText = error ? <ErrorIndicator error={errorMessage} /> : null;
     const loader = loading ? <Loader /> : null;
-    const content = hasData ? <MovieList movies={movies.moviesArray} /> : null;
+    const content = hasData ? <MovieList movies={movies} /> : null;
     const pagination = movies ? (
       <ListPagination
-        totalItems={movies.totalResults}
-        page={movies.currentPage}
+        totalItems={totalResults}
+        page={currentPage}
         onChangePage={this.onChangePage}
       />
     ) : null;
 
     return (
       <Layout className="container">
+        <HeaderTabs />
         <SearchPanel onSearch={this.onSearch} />
         <NoInternetConnection />
-        {errorMessage}
+        {errorText}
         {loader}
-        {content}
+        <MoviesServiceProvider value={this.genres}>
+          {content}
+        </MoviesServiceProvider>
         {pagination}
       </Layout>
     );

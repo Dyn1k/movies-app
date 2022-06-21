@@ -1,0 +1,30 @@
+.vote-average {
+    position: absolute;
+    top: 12px;
+    right: 9px;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    font-size: 12px;
+    text-align: center;
+}
+
+.vote-average_red {
+    border: 2px solid #E90000;
+}
+
+.vote-average_orange {
+    border: 2px solid #E97E00;
+}
+
+.vote-average_yellow {
+    border: 2px solid #E9D100;
+}
+
+.vote-average_green {
+    border: 2px solid #66E900;
+}
+
+.vote-average__rate {
+    vertical-align: sub;
+}

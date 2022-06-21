@@ -1,0 +1,5 @@
+.card-categories {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 7px;
+}

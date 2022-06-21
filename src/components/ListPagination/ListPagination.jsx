@@ -1,10 +1,9 @@
-/* eslint-disable */
-
 import React from 'react';
 
 import { Pagination } from 'antd';
 
 import './ListPagination.css';
+import PropTypes from 'prop-types';
 
 const ListPagination = ({ totalItems, onChangePage, page }) => {
   const showTotal = (total) => `Total ${total} items`;
@@ -24,8 +23,10 @@ const ListPagination = ({ totalItems, onChangePage, page }) => {
   );
 };
 
-ListPagination.defaultProps = {
-  totalItems: 0,
+ListPagination.propTypes = {
+  totalItems: PropTypes.number.isRequired,
+  onChangePage: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
 };
 
 export default ListPagination;

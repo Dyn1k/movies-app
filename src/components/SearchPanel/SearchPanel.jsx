@@ -1,19 +1,21 @@
-/* eslint-disable */
-
 import React from 'react';
 
-import './SearchPanel.css';
 import { Input } from 'antd';
+import PropTypes from 'prop-types';
 
-const SearchPanel = (props) => {
-  return (
-    <Input
-      size="large"
-      className="search-panel"
-      placeholder="Type to search..."
-      onChange={props.onSearch}
-    />
-  );
+import './SearchPanel.css';
+
+const SearchPanel = ({ onSearch }) => (
+  <Input
+    size="large"
+    className="search-panel"
+    placeholder="Type to search..."
+    onChange={onSearch}
+  />
+);
+
+SearchPanel.propTypes = {
+  onSearch: PropTypes.func.isRequired,
 };
 
 export default SearchPanel;

@@ -1,0 +1,22 @@
+.menu-container {
+    margin: 0 auto;
+}
+
+.menu {
+    text-align: center;
+}
+
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item{
+    padding: 0 0;
+    width: 65px;
+}
+
+.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:first-child {
+    margin-right: 16px;
+}
+
+.ant-menu-horizontal > .ant-menu-item::after{
+    width: 100%;
+    position: absolute;
+    left: 0;
+}
