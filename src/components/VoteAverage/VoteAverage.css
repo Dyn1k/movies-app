@@ -1,30 +1,30 @@
 .vote-average {
-    position: absolute;
-    top: 12px;
-    right: 9px;
-    height: 30px;
-    width: 30px;
-    border-radius: 50%;
-    font-size: 12px;
-    text-align: center;
+  position: absolute;
+  top: 12px;
+  right: 9px;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  font-size: 12px;
+  text-align: center;
 }
 
 .vote-average_red {
-    border: 2px solid #E90000;
+  border: 2px solid #e90000;
 }
 
 .vote-average_orange {
-    border: 2px solid #E97E00;
+  border: 2px solid #e97e00;
 }
 
 .vote-average_yellow {
-    border: 2px solid #E9D100;
+  border: 2px solid #e9d100;
 }
 
 .vote-average_green {
-    border: 2px solid #66E900;
+  border: 2px solid #66e900;
 }
 
 .vote-average__rate {
-    vertical-align: sub;
+  vertical-align: -webkit-baseline-middle;
 }

@@ -11,19 +11,66 @@ class MoviesService {
     const res = await fetch(
       `${this.apiBase}${type}?api_key=${this.apiKey}${url}`
     );
-
     if (!res.ok) {
       throw new Error(`Could not fetch ${url}, received ${res.status}`);
+    }
+    return res;
+  }
+
+  async getMovies(text, page = 1) {
+    const res = await this.getResource(
+      this.apiMovie,
+      `&query=${text}&page=${page}`
+    );
+    if (!res.ok)
+      throw new Error(`Could not get a list of movies, received ${res.status}`);
+
+    return res.json();
+  }
+
+  async getGenres() {
+    const res = await this.getResource(this.apiGenres);
+    if (!res.ok) {
+      throw new Error(`Could not get genres, received ${res.status}`);
     }
     return res.json();
   }
 
-  getMovies(text, page = 1) {
-    return this.getResource(this.apiMovie, `&query=${text}&page=${page}`);
+  async createGuestSession() {
+    const res = await this.getResource(this.apiGuestSession);
+    if (!res.ok)
+      throw new Error(`Could not create Guest Session, received ${res.status}`);
+
+    return res.json();
   }
 
-  async getGenres() {
-    return this.getResource(this.apiGenres);
+  async rateMovie(movieId, guestId, rate) {
+    const body = {
+      value: rate,
+    };
+    const res = await fetch(
+      `${this.apiBase}/movie/${movieId}/rating?api_key=${this.apiKey}&guest_session_id=${guestId}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+        },
+        body: JSON.stringify(body),
+      }
+    );
+    if (!res.ok) {
+      // throw new Error(`Failed to rate the movie ${res.status}`);
+    }
+  }
+
+  async getRatedMovies(guestId) {
+    const res = await fetch(
+      `${this.apiBase}/guest_session/${guestId}/rated/movies?api_key=${this.apiKey}`
+    );
+    if (!res.ok) {
+      throw new Error(`Could not get rated movies, received ${res.status}`);
+    }
+    return res.json();
   }
 }
 

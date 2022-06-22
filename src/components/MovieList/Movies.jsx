@@ -11,6 +11,7 @@ const Movies = ({ movies }) => (
       gutter: [36, 16],
       column: 2,
     }}
+    className="movies-list"
     dataSource={movies}
     renderItem={(item) => (
       <List.Item>

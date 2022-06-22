@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+/* eslint-disable */
 import { debounce } from 'lodash';
 import { Layout } from 'antd';
 import 'antd/dist/antd.min.css';
@@ -16,6 +16,7 @@ import ListPagination from '../ListPagination';
 import HeaderTabs from '../HeaderTabs';
 
 import { MoviesServiceProvider } from '../MoviesServiceContext';
+import { GuestSessionProvider } from '../../services/GuestSessionContext';
 
 class App extends Component {
   constructor(props) {
@@ -24,6 +25,8 @@ class App extends Component {
     this.genres = null;
 
     this.state = {
+      // searchTab: true,
+      ratedTab: false,
       loading: true,
       error: false,
     };
@@ -39,6 +42,12 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.moviesService.createGuestSession().then((r) =>
+      this.setState({
+        guestId: r.guest_session_id,
+      })
+    );
+
     this.requestMovies('return');
   }
 
@@ -93,9 +102,43 @@ class App extends Component {
       .catch(this.onError);
   };
 
+  onToggleTabs = (tab) => {
+    this.setPreloadStates();
+    if (tab === 'ratedTab') {
+      this.moviesService
+        .getRatedMovies(this.state.guestId)
+        .then((r) =>
+          this.setState({
+            movies: r.results,
+            totalResults: r.total_results,
+            currentPage: r.page,
+            ratedTab: true,
+            searchTab: false,
+            loading: false,
+          })
+        )
+        .catch(this.onError);
+    }
+    if (tab === 'searchTab') {
+      this.requestMovies(this.state.currentSearch);
+      this.setState({
+        ratedTab: false,
+        searchTab: true,
+      });
+    }
+  };
+
   render() {
-    const { movies, totalResults, currentPage, loading, error, errorMessage } =
-      this.state;
+    const {
+      movies,
+      totalResults,
+      currentPage,
+      loading,
+      error,
+      errorMessage,
+      guestId,
+      ratedTab,
+    } = this.state;
 
     const hasData = !(loading || error);
 
@@ -112,13 +155,16 @@ class App extends Component {
 
     return (
       <Layout className="container">
-        <HeaderTabs />
-        <SearchPanel onSearch={this.onSearch} />
+        <HeaderTabs
+          onClick={this.getRatedMovies}
+          onToggleTab={this.onToggleTabs}
+        />
+        {!ratedTab ? <SearchPanel onSearch={this.onSearch} /> : null}
         <NoInternetConnection />
         {errorText}
         {loader}
         <MoviesServiceProvider value={this.genres}>
-          {content}
+          <GuestSessionProvider value={guestId}>{content}</GuestSessionProvider>
         </MoviesServiceProvider>
         {pagination}
       </Layout>

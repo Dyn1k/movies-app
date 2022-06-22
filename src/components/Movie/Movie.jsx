@@ -63,7 +63,7 @@ class Movie extends Component {
               truncateText=" …"
               text={movie.overview ? movie.overview : 'No description'}
             />
-            <UserRate />
+            <UserRate movieId={movie.id} />
           </div>
         </Layout>
       </Layout>
