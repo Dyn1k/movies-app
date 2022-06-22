@@ -43,7 +43,14 @@ class Movie extends Component {
           preview={false}
         />
         <Layout className="card-body">
-          <div className="card-title">{movie.original_title}</div>
+          <div className="card-title">
+            <TextTruncate
+              line={5}
+              element="span"
+              truncateText=" …"
+              text={movie.original_title || 'No Title'}
+            />
+          </div>
           <VoteAverage vote={movie.vote_average} />
           <div className="card-release-date">
             {movie.release_date
@@ -60,10 +67,10 @@ class Movie extends Component {
             <TextTruncate
               line={Math.floor(height / 22)}
               element="span"
-              truncateText=" …"
+              // truncateText=" …"
               text={movie.overview ? movie.overview : 'No description'}
             />
-            <UserRate movieId={movie.id} />
+            <UserRate movieId={movie.id} userRate={movie.rating} />
           </div>
         </Layout>
       </Layout>

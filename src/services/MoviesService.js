@@ -48,7 +48,7 @@ class MoviesService {
     const body = {
       value: rate,
     };
-    const res = await fetch(
+    await fetch(
       `${this.apiBase}/movie/${movieId}/rating?api_key=${this.apiKey}&guest_session_id=${guestId}`,
       {
         method: 'POST',
@@ -57,15 +57,12 @@ class MoviesService {
         },
         body: JSON.stringify(body),
       }
-    );
-    if (!res.ok) {
-      // throw new Error(`Failed to rate the movie ${res.status}`);
-    }
+    ).catch((e) => `Could not get genres, received ${e.status}`);
   }
 
-  async getRatedMovies(guestId) {
+  async getRatedMovies(guestId, page = 1) {
     const res = await fetch(
-      `${this.apiBase}/guest_session/${guestId}/rated/movies?api_key=${this.apiKey}`
+      `${this.apiBase}/guest_session/${guestId}/rated/movies?api_key=${this.apiKey}&page=${page}`
     );
     if (!res.ok) {
       throw new Error(`Could not get rated movies, received ${res.status}`);

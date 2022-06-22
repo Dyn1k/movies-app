@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-/* eslint-disable */
+
 import { debounce } from 'lodash';
 import { Layout } from 'antd';
 import 'antd/dist/antd.min.css';
 import './App.css';
 
 import MoviesService from '../../services/MoviesService';
+import SessionStorage from '../../services/SessionStorage';
 
 import SearchPanel from '../SearchPanel';
 import MovieList from '../MovieList';
@@ -22,10 +23,11 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.moviesService = new MoviesService();
+    this.sessionStorage = new SessionStorage();
     this.genres = null;
 
     this.state = {
-      // searchTab: true,
+      searchTab: true,
       ratedTab: false,
       loading: true,
       error: false,
@@ -49,6 +51,7 @@ class App extends Component {
     );
 
     this.requestMovies('return');
+    this.sessionStorage.setItem('searchTab', 1);
   }
 
   onSearch = (e) => {
@@ -66,9 +69,15 @@ class App extends Component {
   };
 
   onChangePage = (pageNumber) => {
-    const { currentSearch } = this.state;
+    const { currentSearch, searchTab, ratedTab, guestId } = this.state;
     this.setPreloadStates();
-    this.requestMovies(currentSearch, pageNumber);
+    if (searchTab) {
+      this.sessionStorage.setItem('searchTab', pageNumber);
+      this.requestMovies(currentSearch, pageNumber);
+    }
+    if (ratedTab) {
+      this.requestRateMovies(guestId, pageNumber);
+    }
   };
 
   setPreloadStates = () => {
@@ -93,6 +102,17 @@ class App extends Component {
       .catch(this.onError);
   };
 
+  requestRateMovies = (id, num = 1) => {
+    this.moviesService.getRatedMovies(id, num).then((r) =>
+      this.setState({
+        movies: r.results,
+        totalResults: r.total_results,
+        currentPage: r.page,
+        loading: false,
+      })
+    );
+  };
+
   getGenres = () => {
     this.moviesService
       .getGenres()
@@ -103,24 +123,21 @@ class App extends Component {
   };
 
   onToggleTabs = (tab) => {
+    const { guestId, currentSearch } = this.state;
+
     this.setPreloadStates();
     if (tab === 'ratedTab') {
-      this.moviesService
-        .getRatedMovies(this.state.guestId)
-        .then((r) =>
-          this.setState({
-            movies: r.results,
-            totalResults: r.total_results,
-            currentPage: r.page,
-            ratedTab: true,
-            searchTab: false,
-            loading: false,
-          })
-        )
-        .catch(this.onError);
+      this.requestRateMovies(guestId);
+      this.setState({
+        ratedTab: true,
+        searchTab: false,
+      });
     }
     if (tab === 'searchTab') {
-      this.requestMovies(this.state.currentSearch);
+      this.requestMovies(
+        currentSearch,
+        this.sessionStorage.getItem('searchTab')
+      );
       this.setState({
         ratedTab: false,
         searchTab: true,
