@@ -169,8 +169,6 @@ class App extends Component {
       />
     ) : null;
 
-    // this.getGenres();
-
     return (
       <Layout className="container">
         <HeaderTabs
