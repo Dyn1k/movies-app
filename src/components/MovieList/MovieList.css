@@ -1,8 +1,25 @@
 .movies-list {
+  background-color: transparent;
   margin-top: 32px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
 }
 
 .no-search {
   margin-top: 20px;
   font-size: 18px;
+}
+
+@media screen and (max-width: 987px) {
+  .movies-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .movies-list {
+    margin-top: 16px;
+    gap: 20px;
+  }
 }

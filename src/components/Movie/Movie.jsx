@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import TextTruncate from 'react-text-truncate';
 import { format } from 'date-fns';
-import { Layout, Image } from 'antd';
+import { Layout } from 'antd';
 
 import NoPhoto from './empty-thumb.jpg';
 import VoteAverage from '../VoteAverage';
@@ -29,35 +29,32 @@ class Movie extends Component {
   render() {
     const { movie } = this.props;
     const { height } = this.state;
-
     return (
       <Layout className="card-wrapper">
-        <Image
+        <img
           className="card-image"
-          alt="example"
+          alt={movie.original_title}
           src={
             movie.poster_path
               ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
               : NoPhoto
           }
-          preview={false}
         />
         <Layout className="card-body">
-          <div className="card-title">
-            <TextTruncate
-              line={5}
-              element="span"
-              truncateText=" …"
-              text={movie.original_title || 'No Title'}
-            />
+          <div className="titles-wrapper">
+            <div className="title-vote-wrapper">
+              <div className="card-title">
+                {movie.original_title || 'No Title'}
+              </div>
+              <VoteAverage vote={movie.vote_average} />
+            </div>
+            <div className="card-release-date">
+              {movie.release_date
+                ? format(new Date(movie.release_date), "MMMMMM d',' Y")
+                : 'No date'}
+            </div>
+            {movie.genre_ids ? <Genres genres={movie.genre_ids} /> : null}
           </div>
-          <VoteAverage vote={movie.vote_average} />
-          <div className="card-release-date">
-            {movie.release_date
-              ? format(new Date(movie.release_date), "MMMMMM d',' Y")
-              : 'No date'}
-          </div>
-          {movie.genre_ids ? <Genres genres={movie.genre_ids} /> : null}
           <div
             className="card-description"
             ref={(divElement) => {
@@ -67,11 +64,10 @@ class Movie extends Component {
             <TextTruncate
               line={Math.floor(height / 22)}
               element="span"
-              // truncateText=" …"
               text={movie.overview ? movie.overview : 'No description'}
             />
-            <UserRate movieId={movie.id} userRate={movie.rating} />
           </div>
+          <UserRate movieId={movie.id} userRate={movie.rating} />
         </Layout>
       </Layout>
     );

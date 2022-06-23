@@ -28,3 +28,11 @@
 .vote-average__rate {
   vertical-align: -webkit-baseline-middle;
 }
+
+@media screen and (max-width: 576px) {
+  .vote-average {
+    position: static;
+    /*top: 5px;*/
+    /*right: 8px;*/
+  }
+}

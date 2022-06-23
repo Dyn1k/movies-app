@@ -8,3 +8,10 @@
 .ant-rate-star:not(:last-child) {
   margin-right: 5px;
 }
+
+@media screen and (max-width: 576px) {
+  .card-rate {
+    right: 10px;
+    left: auto;
+  }
+}

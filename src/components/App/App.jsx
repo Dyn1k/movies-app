@@ -24,7 +24,6 @@ class App extends Component {
     super(props);
     this.moviesService = new MoviesService();
     this.sessionStorage = new SessionStorage();
-    this.genres = null;
 
     this.state = {
       searchTab: true,
@@ -39,8 +38,6 @@ class App extends Component {
         this.requestMovies(criteria.target.value);
       }
     }, 1000);
-
-    this.getGenres();
   }
 
   componentDidMount() {
@@ -117,7 +114,7 @@ class App extends Component {
     this.moviesService
       .getGenres()
       .then((r) => {
-        this.genres = r.genres;
+        this.setState({ genres: r.genres });
       })
       .catch(this.onError);
   };
@@ -155,6 +152,7 @@ class App extends Component {
       errorMessage,
       guestId,
       ratedTab,
+      genres,
     } = this.state;
 
     const hasData = !(loading || error);
@@ -170,6 +168,8 @@ class App extends Component {
       />
     ) : null;
 
+    this.getGenres();
+
     return (
       <Layout className="container">
         <HeaderTabs
@@ -180,7 +180,7 @@ class App extends Component {
         <NoInternetConnection />
         {errorText}
         {loader}
-        <MoviesServiceProvider value={this.genres}>
+        <MoviesServiceProvider value={genres}>
           <GuestSessionProvider value={guestId}>{content}</GuestSessionProvider>
         </MoviesServiceProvider>
         {pagination}

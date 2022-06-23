@@ -1,8 +1,16 @@
 .card-wrapper {
+  position: relative;
   display: grid;
   grid-template-columns: 40% 60%;
   height: 281px;
   filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.15));
+  overflow: hidden;
+}
+
+.titles-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
 
 .card-image {
@@ -41,4 +49,45 @@
   height: 100%;
   color: #000000;
   overflow: hidden;
+}
+
+@media screen and (min-width: 670px) and (max-width: 987px) {
+  .card-title {
+    max-width: 300px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .title-vote-wrapper {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    max-width: calc(100% - 30px);
+  }
+
+  .card-image {
+    position: absolute;
+    top: 6px;
+    left: 10px;
+    height: 90px;
+    width: 70px;
+    z-index: 2;
+  }
+
+  .card-wrapper {
+    height: 245px;
+    grid-template-columns: auto;
+  }
+
+  .card-body {
+    padding: 5px 10px 10px 10px;
+    row-gap: 21px;
+  }
+
+  .titles-wrapper {
+   margin-left: 83px;
+    /*min-height: 115px;*/
+  }
 }
