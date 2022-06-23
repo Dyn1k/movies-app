@@ -47,9 +47,9 @@ class App extends Component {
       })
     );
 
+    this.getGenres();
     this.requestMovies('return');
     this.sessionStorage.setItem('searchTab', 1);
-    this.getGenres();
   }
 
   onSearch = (e) => {
@@ -168,8 +168,6 @@ class App extends Component {
         onChangePage={this.onChangePage}
       />
     ) : null;
-
-    // this.getGenres();
 
     return (
       <Layout className="container">
